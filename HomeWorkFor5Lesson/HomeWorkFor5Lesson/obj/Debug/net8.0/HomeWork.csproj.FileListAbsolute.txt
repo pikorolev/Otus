@@ -1,0 +1,14 @@
+C:\Users\Павел\OneDrive\Рабочий стол\Otus\HomeWork1\HomeWork\bin\Debug\net8.0\HomeWork.exe
+C:\Users\Павел\OneDrive\Рабочий стол\Otus\HomeWork1\HomeWork\bin\Debug\net8.0\HomeWork.deps.json
+C:\Users\Павел\OneDrive\Рабочий стол\Otus\HomeWork1\HomeWork\bin\Debug\net8.0\HomeWork.runtimeconfig.json
+C:\Users\Павел\OneDrive\Рабочий стол\Otus\HomeWork1\HomeWork\bin\Debug\net8.0\HomeWork.dll
+C:\Users\Павел\OneDrive\Рабочий стол\Otus\HomeWork1\HomeWork\bin\Debug\net8.0\HomeWork.pdb
+C:\Users\Павел\OneDrive\Рабочий стол\Otus\HomeWork1\HomeWork\obj\Debug\net8.0\HomeWork.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Павел\OneDrive\Рабочий стол\Otus\HomeWork1\HomeWork\obj\Debug\net8.0\HomeWork.AssemblyInfoInputs.cache
+C:\Users\Павел\OneDrive\Рабочий стол\Otus\HomeWork1\HomeWork\obj\Debug\net8.0\HomeWork.AssemblyInfo.cs
+C:\Users\Павел\OneDrive\Рабочий стол\Otus\HomeWork1\HomeWork\obj\Debug\net8.0\HomeWork.csproj.CoreCompileInputs.cache
+C:\Users\Павел\OneDrive\Рабочий стол\Otus\HomeWork1\HomeWork\obj\Debug\net8.0\HomeWork.dll
+C:\Users\Павел\OneDrive\Рабочий стол\Otus\HomeWork1\HomeWork\obj\Debug\net8.0\refint\HomeWork.dll
+C:\Users\Павел\OneDrive\Рабочий стол\Otus\HomeWork1\HomeWork\obj\Debug\net8.0\HomeWork.pdb
+C:\Users\Павел\OneDrive\Рабочий стол\Otus\HomeWork1\HomeWork\obj\Debug\net8.0\HomeWork.genruntimeconfig.cache
+C:\Users\Павел\OneDrive\Рабочий стол\Otus\HomeWork1\HomeWork\obj\Debug\net8.0\ref\HomeWork.dll
