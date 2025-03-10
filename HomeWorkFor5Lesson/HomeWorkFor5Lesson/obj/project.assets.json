@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Павел\\OneDrive\\Рабочий стол\\Otus\\HomeWorkFor5Lesson\\HomeWorkFor5Lesson\\HomeWorkFor5Lesson.csproj",
+      "projectUniqueName": "C:\\Users\\Павел\\Source\\Repos\\Otus\\HomeWorkFor5Lesson\\HomeWorkFor5Lesson\\HomeWorkFor5Lesson.csproj",
       "projectName": "HomeWorkFor5Lesson",
-      "projectPath": "C:\\Users\\Павел\\OneDrive\\Рабочий стол\\Otus\\HomeWorkFor5Lesson\\HomeWorkFor5Lesson\\HomeWorkFor5Lesson.csproj",
+      "projectPath": "C:\\Users\\Павел\\Source\\Repos\\Otus\\HomeWorkFor5Lesson\\HomeWorkFor5Lesson\\HomeWorkFor5Lesson.csproj",
       "packagesPath": "C:\\Users\\Павел\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Павел\\OneDrive\\Рабочий стол\\Otus\\HomeWorkFor5Lesson\\HomeWorkFor5Lesson\\obj\\",
+      "outputPath": "C:\\Users\\Павел\\Source\\Repos\\Otus\\HomeWorkFor5Lesson\\HomeWorkFor5Lesson\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
