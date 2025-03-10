@@ -1,8 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-/*
-Доступ к команде /echo: После ввода имени становится доступной команда /echo. При вводе этой команды с аргументом (например, /echo Hello), программа возвращает введенный текст (в данном примере "Hello").
-*/
-using System;
+﻿using System;
 using System.Reflection;
 class Program
 {
