@@ -8,11 +8,11 @@ namespace HomeWorkFor13Lesson
 {
     internal class Stack
     {
-        private List<string> items;
+        private readonly List<string> items;
         // Кол-во элементов из Стека
         public int Size { get { return items.Count; } }
         // Верхний элемент
-        public string Top
+        public string? Top
         {
             get { return items.Count > 0 ? items[items.Count - 1] : null;}
         }
