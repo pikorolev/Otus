@@ -12,6 +12,12 @@ namespace HomeWorkFor13Lesson
             // size = 3, Top = 'c'
             Console.WriteLine($"size = {s.Size}, Top = '{s.Top}'");
 
+            // в стеке s теперь элементы - "a", "b", "c", "3", "2", "1" <- верхний
+            s.Merge(new Stack("1", "2", "3"));
+
+            // в стеке s теперь элементы -  "c", "b", "a" "3", "2", "1", "В", "Б", "А" <- верхний
+            var s2 = Stack.Concat(new Stack("a", "b", "c"), new Stack("1", "2", "3"), new Stack("А", "Б", "В"));
+
             var deleted = s.Pop();
 
             // Извлек верхний элемент 'c' Size = 2
@@ -21,6 +27,9 @@ namespace HomeWorkFor13Lesson
             // size = 3, Top = 'd'
             Console.WriteLine($"size = {s.Size}, Top = '{s.Top}'");
 
+            s.Pop();
+            s.Pop();
+            s.Pop();
             s.Pop();
             s.Pop();
             s.Pop();
