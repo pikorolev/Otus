@@ -33,8 +33,6 @@ namespace HomeWorkFor5Lesson
                 }
                 EnableCommand(botClient, update);
 
-                botClient.SendMessage(update.Message.Chat, "Введите команду:");
-                //var command = Console.ReadLine();
                 switch (update.Message.Text.Split(' ')[0])
                 {
                     case @"/start":
@@ -55,6 +53,12 @@ namespace HomeWorkFor5Lesson
                     case @"/removetask":
                         RemoveTaskCommand(botClient, update);
                         break;
+                    case @"/completetask":
+                        CompleteTask(botClient, update);
+                        break;
+                    case @"/showalltasks":
+                        ShowAllTasks(botClient, update);
+                        break;
                     case @"/exit":
                         return;
                     default:
@@ -67,24 +71,48 @@ namespace HomeWorkFor5Lesson
             }
             catch (ArgumentException ex)
             {
-                ITelegramBotClient.SendMessage(ex.Message);
-                continue;
+                botClient.SendMessage(update.Message.Chat,ex.Message);
             }
             catch (TaskCountLimitException ex)
             {
-                ITelegramBotClient.SendMessage(ex.Message);
-                continue;
+                botClient.SendMessage(update.Message.Chat, ex.Message);
             }
             catch (TaskLengthLimitException ex)
             {
-                ITelegramBotClient.SendMessage(ex.Message);
-                continue;
+                botClient.SendMessage(update.Message.Chat, ex.Message);
             }
             catch (DuplicateTaskException ex)
             {
-                ITelegramBotClient.SendMessage(ex.Message);
-                continue;
+                botClient.SendMessage(update.Message.Chat, ex.Message);
             }
+        }
+
+        private void ShowAllTasks(ITelegramBotClient botClient, Update update)
+        {
+            if (currentUser == null)
+            {
+                botClient.SendMessage(update.Message.Chat, "Неизвестная команда:");
+            }
+
+            if (toDoService.GetCount() == 0)
+                botClient.SendMessage(update.Message.Chat, "Список задач пуст");
+            else
+                botClient.SendMessage(update.Message.Chat, "Вот ваш список задач:");
+            foreach (var task in toDoService.GetAllByUserId(currentUser.UserId))
+            {
+                botClient.SendMessage(update.Message.Chat, $"({task.State}) {task.Name} - {task.CreatedAt} - {task.Id}");
+            }
+        }
+
+        private void CompleteTask(ITelegramBotClient botClient, Update update)
+        {
+            if (currentUser == null)
+            {
+                botClient.SendMessage(update.Message.Chat, "Неизвестная команда:");
+            }
+            string str = update.Message.Text.Substring(@"/completetask ".Length);
+            Guid delGuig = new Guid(str);
+            toDoService.MarkCompleted(delGuig);
         }
 
         // Ввод максимального кол-ва задач
@@ -132,7 +160,7 @@ namespace HomeWorkFor5Lesson
         private void EnableCommand(ITelegramBotClient botClient, Update update)
         {
             if (currentUser != null)
-                botClient.SendMessage(update.Message.Chat, $"{currentUser.TelegramUserName}, вам доступные команды: /start, /help/, /info, /addttask, /showtasks, /removetask, /exit");
+                botClient.SendMessage(update.Message.Chat, $"{currentUser.TelegramUserName}, вам доступные команды: /start, /help/, /info, /addttask, /showtasks, /removetask, /completetask, /showalltasks ,/exit");
             else
                 botClient.SendMessage(update.Message.Chat, @"Доступные команды: /start, /help/, /info, /exit");
         }
@@ -151,8 +179,10 @@ namespace HomeWorkFor5Lesson
             if (currentUser != null)
             {
                 botClient.SendMessage(update.Message.Chat, @"  /addtask : позволяет добавить задачу в список.");
-                botClient.SendMessage(update.Message.Chat, @"  /showtasks : выводит список задач.");
+                botClient.SendMessage(update.Message.Chat, @"  /showtasks : выводит список активных задач.");
                 botClient.SendMessage(update.Message.Chat, @"  /removetask : позвояет удаить задачу.");
+                botClient.SendMessage(update.Message.Chat, @"  /completetask : заверршает задачу.");
+                botClient.SendMessage(update.Message.Chat, @"  /showalltasks : выводит все задачи.");
             }
             botClient.SendMessage(update.Message.Chat, @"  /start : позволяет ввести в порграмму Ваше имя, что бы прорграмма Вас узнавала.");
             botClient.SendMessage(update.Message.Chat, @"  /help : отображает краткую справочную информацию о том, как пользоваться программой.");
@@ -173,38 +203,46 @@ namespace HomeWorkFor5Lesson
         // Обработка команды /addtask
         private void AddTaskCommand(ITelegramBotClient botClient, Update update)
         {
+            if (currentUser == null)
+            {
+                botClient.SendMessage(update.Message.Chat, "Неизвестная команда:");
+            }
+
             if (toDoService.GetCount() >= taskCountLimit)
             {
-                throw new TaskCountLimitException(taskCountLimit);
+                throw new TaskCountLimitException(taskCountLimit, botClient, update);
             }
-            if (currentUser != null)
-                botClient.SendMessage(update.Message.Chat, $"{currentUser.TelegramUserName}, введите описание задачи:");
-            else
-                botClient.SendMessage(update.Message.Chat, "Введите описание задачи:");
 
-            if (update.Message.Text.Length > taskLengthLimit)
+            string str = update.Message.Text.Substring(@"/addtask ".Length);
+
+            if (str.Length > taskLengthLimit)
             {
-                throw new TaskLengthLimitException(update.Message.Text.Length, taskLengthLimit);
+                throw new TaskLengthLimitException(str.Length, taskLengthLimit, botClient, update);
             }
 
-            if (String.IsNullOrEmpty(update.Message.Text))
+            if (String.IsNullOrEmpty(str))
                 botClient.SendMessage(update.Message.Chat, "Нельзя добавить задачу с пустым описанием");
             else
             {
                 var toDoList = toDoService.GetAllByUserId(currentUser.UserId);
                 foreach ( var toDoItem in toDoList)
                 {
-                    if (toDoItem.Name == update.Message.Text)
-                        throw new DuplicateTaskException(update.Message.Text);
+                    if (toDoItem.Name == str)
+                        throw new DuplicateTaskException(str, botClient, update);
                 }
 
-                var newTask = toDoService.Add(currentUser, update.Message.Text);
-                botClient.SendMessage(update.Message.Chat, @$"Задача ""{update.Message.Text}"" добавлена в список");
+                var newTask = toDoService.Add(currentUser, str);
+                botClient.SendMessage(update.Message.Chat, @$"Задача ""{str}"" добавлена в список");
             }
         }
         // Обработка команды /showtasks
         private void ShowTasksCommand(ITelegramBotClient botClient, Update update)
         {
+            if (currentUser == null)
+            {
+                botClient.SendMessage(update.Message.Chat, "Неизвестная команда:");
+            }
+
             if (toDoService.GetCount() == 0)
                 botClient.SendMessage(update.Message.Chat, "Список задач пуст");
             else
@@ -217,15 +255,19 @@ namespace HomeWorkFor5Lesson
         // Обработка команды /removetask
         private void RemoveTaskCommand(ITelegramBotClient botClient, Update update)
         {
-            ShowTasksCommand(botClient, update);
+            if (currentUser == null)
+            {
+                botClient.SendMessage(update.Message.Chat, "Неизвестная команда:");
+            }
+
             if (toDoService.GetCount() == 0)
             {
                 botClient.SendMessage(update.Message.Chat, "Удалять нечего");
                 return;
             }
-            toDoService.Delete(update.Message.Text);
-            return;
-            botClient.SendMessage(update.Message.Chat, "Введен некорректный Guid задачи");
+            string str = update.Message.Text.Substring(@"/removetask ".Length);
+            Guid delGuig = new Guid(str);
+            toDoService.Delete(delGuig);
         }
     }
 }
