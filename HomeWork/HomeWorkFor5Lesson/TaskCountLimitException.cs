@@ -4,7 +4,7 @@ using System;
 
 public class TaskCountLimitException : Exception
 {
-    public TaskCountLimitException(int taskCountLimit, ITelegramBotClient botClient, Update update)
+    public TaskCountLimitException(int taskCountLimit)
         : base($"Превышено максимальное количество задач равное {taskCountLimit}")
     {
     }
