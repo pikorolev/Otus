@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HomeWorkFor5Lesson
+namespace HomeWorkFor5Lesson.Core.Entities
 {
     internal class ToDoUser
     {

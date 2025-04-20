@@ -1,4 +1,4 @@
-﻿namespace HomeWorkFor5Lesson
+﻿namespace HomeWorkFor5Lesson.Core.Entities
 {
     enum ToDoItemState
     {

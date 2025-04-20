@@ -1,4 +1,6 @@
-﻿using Otus.ToDoList.ConsoleBot;
+﻿using HomeWorkFor5Lesson.Core.DataAccess;
+using HomeWorkFor5Lesson.Core.Services;
+using Otus.ToDoList.ConsoleBot;
 using Otus.ToDoList.ConsoleBot.Types;
 using System;
 using System.Collections.Generic;
@@ -9,16 +11,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace HomeWorkFor5Lesson
+namespace HomeWorkFor5Lesson.TelegramBot
 {
     internal class UpdateHandler : IUpdateHandler
     {
-        IUserService userService;
-        IToDoService toDoService;
-        public UpdateHandler(IUserService userService, IToDoService toDoService)
+        private readonly IUserService userService;
+        private readonly IToDoService toDoService;
+        private readonly IToDoReportService toDoReportService;
+        public UpdateHandler(IUserService userService, IToDoService toDoService, IToDoReportService toDoReportService)
         {
             this.userService = userService;
             this.toDoService = toDoService;
+            this.toDoReportService = toDoReportService;
         }
         public void HandleUpdateAsync(ITelegramBotClient botClient, Update update)
         {
@@ -52,6 +56,12 @@ namespace HomeWorkFor5Lesson
                     case @"/showalltasks":
                         ShowAllTasks(botClient, update);
                         break;
+                    case @"/report":
+                        ReportStats(botClient, update);
+                        break;
+                    case @"/find":
+                        FindTask(botClient, update);
+                        break;
                     case @"/exit":
                         return;
                     default:
@@ -80,17 +90,36 @@ namespace HomeWorkFor5Lesson
             }
         }
 
+        private void FindTask(ITelegramBotClient botClient, Update update)
+        {
+            string str = update.Message.Text.Substring(@"/find ".Length);
+            var foundItems = toDoService.Find(userService.GetUser(update.Message.From.Id), str);
+            if (foundItems.Count == 0)
+            {
+                botClient.SendMessage(update.Message.Chat, "Задачи не найдены.");
+            }
+            else
+            {
+                foreach (var item in foundItems)
+                {
+                    botClient.SendMessage(update.Message.Chat, $"{item.Name} - {item.CreatedAt} - {item.Id}");
+                }
+            }
+        }
+
+        private void ReportStats(ITelegramBotClient botClient, Update update)
+        {
+            var stats = toDoReportService.GetUserStats(userService.GetUser(update.Message.From.Id).UserId);
+            botClient.SendMessage(update.Message.Chat, $"Статистика по задачам на {stats.generatedAt}. Всего: {stats.total}; Завершенных: {stats.completed}; Активных: {stats.active};");
+        }
+
         private void ShowAllTasks(ITelegramBotClient botClient, Update update)
         {
             if (userService.GetUser(update.Message.From.Id) == null)
             {
                 botClient.SendMessage(update.Message.Chat, "Неизвестная команда:");
             }
-
-            if (toDoService.GetCount() == 0)
-                botClient.SendMessage(update.Message.Chat, "Список задач пуст");
-            else
-                botClient.SendMessage(update.Message.Chat, "Вот ваш список задач:");
+            botClient.SendMessage(update.Message.Chat, "Вот ваш список задач:");
             foreach (var task in toDoService.GetAllByUserId(userService.GetUser(update.Message.From.Id).UserId))
             {
                 botClient.SendMessage(update.Message.Chat, $"({task.State}) {task.Name} - {task.CreatedAt} - {task.Id}");
@@ -111,7 +140,7 @@ namespace HomeWorkFor5Lesson
         private void EnableCommand(ITelegramBotClient botClient, Update update)
         {
             if (userService.GetUser(update.Message.From.Id) != null)
-                botClient.SendMessage(update.Message.Chat, $"{userService.GetUser(update.Message.From.Id).TelegramUserName}, вам доступные команды: /start, /help/, /info, /addttask, /showtasks, /removetask, /completetask, /showalltasks ,/exit");
+                botClient.SendMessage(update.Message.Chat, $"{userService.GetUser(update.Message.From.Id).TelegramUserName}, вам доступные команды: /start, /help/, /info, /addttask, /showtasks, /removetask, /completetask, /showalltasks ,/report, /find, /exit");
             else
                 botClient.SendMessage(update.Message.Chat, @"Доступные команды: /start, /help/, /info, /exit");
         }
@@ -134,6 +163,8 @@ namespace HomeWorkFor5Lesson
                 botClient.SendMessage(update.Message.Chat, @"  /removetask : позвояет удаить задачу.");
                 botClient.SendMessage(update.Message.Chat, @"  /completetask : заверршает задачу.");
                 botClient.SendMessage(update.Message.Chat, @"  /showalltasks : выводит все задачи.");
+                botClient.SendMessage(update.Message.Chat, @"  /report : выводит статистику по задачам.");
+                botClient.SendMessage(update.Message.Chat, @"  /find : выводит все задачи которые начинаются с заданного значения.");
             }
             botClient.SendMessage(update.Message.Chat, @"  /start : позволяет ввести в порграмму Ваше имя, что бы прорграмма Вас узнавала.");
             botClient.SendMessage(update.Message.Chat, @"  /help : отображает краткую справочную информацию о том, как пользоваться программой.");
@@ -149,7 +180,7 @@ namespace HomeWorkFor5Lesson
             else
                 botClient.SendMessage(update.Message.Chat, "Информация о программе:");
             botClient.SendMessage(update.Message.Chat, $"  Версия: {assembly.GetName().Version}");
-            botClient.SendMessage(update.Message.Chat, $"  Дата создания: {System.IO.File.GetLastWriteTime(assembly.Location)}");
+            botClient.SendMessage(update.Message.Chat, $"  Дата создания: {File.GetLastWriteTime(assembly.Location)}");
         }
         // Обработка команды /addtask
         private void AddTaskCommand(ITelegramBotClient botClient, Update update)
@@ -161,7 +192,7 @@ namespace HomeWorkFor5Lesson
 
             string str = update.Message.Text.Substring(@"/addtask ".Length);
 
-            if (String.IsNullOrEmpty(str))
+            if (string.IsNullOrEmpty(str))
                 botClient.SendMessage(update.Message.Chat, "Нельзя добавить задачу с пустым описанием");
             else
             {
@@ -176,12 +207,8 @@ namespace HomeWorkFor5Lesson
             {
                 botClient.SendMessage(update.Message.Chat, "Неизвестная команда:");
             }
-
-            if (toDoService.GetCount() == 0)
-                botClient.SendMessage(update.Message.Chat, "Список задач пуст");
-            else
-                botClient.SendMessage(update.Message.Chat, "Вот ваш список задач:");
-            foreach(var task in toDoService.GetActiveByUserId(userService.GetUser(update.Message.From.Id).UserId))
+            botClient.SendMessage(update.Message.Chat, "Вот ваш список задач:");
+            foreach (var task in toDoService.GetActiveByUserId(userService.GetUser(update.Message.From.Id).UserId))
             {
                 botClient.SendMessage(update.Message.Chat, $"{task.Name} - {task.CreatedAt} - {task.Id}");
             }
@@ -194,11 +221,6 @@ namespace HomeWorkFor5Lesson
                 botClient.SendMessage(update.Message.Chat, "Неизвестная команда:");
             }
 
-            if (toDoService.GetCount() == 0)
-            {
-                botClient.SendMessage(update.Message.Chat, "Удалять нечего");
-                return;
-            }
             string str = update.Message.Text.Substring(@"/removetask ".Length);
             Guid delGuig = new Guid(str);
             toDoService.Delete(delGuig);
