@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using HomeWorkFor5Lesson.Core.Entities;
 
-namespace HomeWorkFor5Lesson
+namespace HomeWorkFor5Lesson.Core.Services
 {
     internal interface IUserService
     {

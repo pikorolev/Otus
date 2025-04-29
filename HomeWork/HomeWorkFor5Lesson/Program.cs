@@ -1,21 +1,24 @@
-﻿using HomeWorkFor5Lesson;
+﻿using HomeWorkFor5Lesson.Infrastructure.DataAccess;
 using Otus.ToDoList.ConsoleBot;
-using Otus.ToDoList.ConsoleBot.Types;
-using System;
-using System.Reflection;
+using HomeWorkFor5Lesson.Core.Services;
+using HomeWorkFor5Lesson.TelegramBot;
 class Program
 {
     static void Main(string[] args)
     {
         try
         {
+            InMemoryUserRepository inMemoryUserRepository = new InMemoryUserRepository();
+            UserService userService = new UserService(inMemoryUserRepository);
+
             var taskCountLimit = EnterTaskCount();
             var taskLengthLimit = EnterTaskLengthLimit();
+            InMemoryToDoRepository inMemoryToDoRepository = new InMemoryToDoRepository();
+            ToDoService toDoService = new ToDoService(taskCountLimit, taskLengthLimit, inMemoryToDoRepository);
 
-            UserService userService = new UserService();
-            ToDoService toDoService = new ToDoService(taskCountLimit, taskLengthLimit);
+            ToDoReportService toDoReportService = new ToDoReportService(inMemoryToDoRepository);
 
-            var handler = new UpdateHandler(userService, toDoService);
+            var handler = new UpdateHandler(userService, toDoService, toDoReportService);
             var botClient = new ConsoleBotClient();
 
             
