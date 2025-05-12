@@ -16,16 +16,16 @@ namespace HomeWorkFor5Lesson.Core.Services
             this.userRepository = userRepository;
         }
         // Регистирует нового пользователя
-        public ToDoUser RegisterUser(long telegramUserId, string telegramUserName)
+        public async Task<ToDoUser> RegisterUser(long telegramUserId, string telegramUserName, CancellationToken ct)
         {
             var user = new ToDoUser(telegramUserId, telegramUserName);
-            userRepository.Add(user);
+            await userRepository.Add(user, ct);
             return user;
         }
         // Возвращает пользователя по telegramUserId
-        public ToDoUser? GetUser(long telegramUserId)
+        public async Task<ToDoUser?> GetUser(long telegramUserId, CancellationToken ct)
         {
-            return userRepository.GetUserByTelegramUserId(telegramUserId);
+            return await userRepository.GetUserByTelegramUserId(telegramUserId, ct);
         }
     }
 }

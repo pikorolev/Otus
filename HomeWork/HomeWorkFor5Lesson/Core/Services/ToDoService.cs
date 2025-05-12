@@ -23,17 +23,17 @@ namespace HomeWorkFor5Lesson.Core.Services
             this.toDoRepository = toDoRepository;
         }
         // Возвращает ToDoItem для UserId со статусом Active
-        public IReadOnlyList<ToDoItem> GetActiveByUserId(Guid userId)
+        public async Task<IReadOnlyList<ToDoItem>> GetActiveByUserId(Guid userId)
         {
-            return toDoRepository.GetActiveByUserId(userId);
+            return await toDoRepository.GetActiveByUserId(userId);
         }
         // Возвращает полный список задач
-        public IReadOnlyList<ToDoItem> GetAllByUserId(Guid userId)
+        public async Task<IReadOnlyList<ToDoItem>> GetAllByUserId(Guid userId)
         {
-            return toDoRepository.GetAllByUserId(userId);
+            return await toDoRepository.GetAllByUserId(userId);
         }
         // Добавляет новую задачу
-        public ToDoItem Add(ToDoUser user, string name)
+        public async Task<ToDoItem> Add(ToDoUser user, string name)
         {
             if (toDoRepository.CountActive(user.UserId) >= taskCountLimit)
                 throw new TaskCountLimitException(taskCountLimit);
@@ -45,13 +45,13 @@ namespace HomeWorkFor5Lesson.Core.Services
                 throw new DuplicateTaskException(name);
 
             var newItem = new ToDoItem(user, name);
-            toDoRepository.Add(newItem);
+            await toDoRepository.Add(newItem);
             return newItem;
         }
         // Помечает задачу как выполненную
-        public void MarkCompleted(Guid id)
+        public async Task MarkCompleted(Guid id)
         {
-            var item = toDoRepository.GetToDoItemById(id);
+            var item = await toDoRepository.GetToDoItemById(id);
             if (item != null)
             {
                 item.State = ToDoItemState.Completed;
@@ -60,13 +60,13 @@ namespace HomeWorkFor5Lesson.Core.Services
             }
         }
         // Удаляет задачу
-        public void Delete(Guid id)
+        public async Task Delete(Guid id)
         {
-            toDoRepository.Delete(id);
+            await toDoRepository.Delete(id);
         }
-        public IReadOnlyList<ToDoItem> Find(ToDoUser user, string namePrefix)
+        public async Task<IReadOnlyList<ToDoItem>> Find(ToDoUser user, string namePrefix)
         {
-            return toDoRepository.Find(user.UserId, item => item.Name.StartsWith(namePrefix, StringComparison.OrdinalIgnoreCase));
+            return await toDoRepository.Find(user.UserId, item => item.Name.StartsWith(namePrefix, StringComparison.OrdinalIgnoreCase));
         }
     }
 }

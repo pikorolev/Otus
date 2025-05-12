@@ -6,7 +6,7 @@ namespace HomeWorkFor5Lesson.Infrastructure.DataAccess
     internal class InMemoryUserRepository : IUserRepository
     {
         private readonly List<ToDoUser> users = new List<ToDoUser>();
-        public ToDoUser? GetUser(Guid userId)
+        public async Task<ToDoUser?> GetUser(Guid userId, CancellationToken ct)
         {
             foreach (var user in users)
             {
@@ -15,7 +15,7 @@ namespace HomeWorkFor5Lesson.Infrastructure.DataAccess
             }
             return null;
         }
-        public ToDoUser? GetUserByTelegramUserId(long telegramUserId)
+        public async Task<ToDoUser?> GetUserByTelegramUserId(long telegramUserId, CancellationToken ct)
         {
             foreach (var user in users)
             {
@@ -24,9 +24,10 @@ namespace HomeWorkFor5Lesson.Infrastructure.DataAccess
             }
             return null;
         }
-        public void Add(ToDoUser user)
+        public Task Add(ToDoUser user, CancellationToken ct)
         {
             users.Add(user);
+            return Task.CompletedTask;
         }
     }
 }
