@@ -23,8 +23,8 @@ namespace HomeWorkFor5Lesson.TelegramBot
         private readonly IToDoService toDoService;
         private readonly IToDoReportService toDoReportService;
 
-        public event MessageEventHandler OnHandleUpdateStarted;
-        public event MessageEventHandler OnHandleUpdateCompleted;
+        public event MessageEventHandler? OnHandleUpdateStarted;
+        public event MessageEventHandler? OnHandleUpdateCompleted;
         public UpdateHandler(IUserService userService, IToDoService toDoService, IToDoReportService toDoReportService)
         {
             this.userService = userService;
