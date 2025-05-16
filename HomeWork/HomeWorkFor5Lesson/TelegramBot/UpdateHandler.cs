@@ -113,7 +113,7 @@ namespace HomeWorkFor5Lesson.TelegramBot
         {
             string str = update.Message.Text.Substring(@"/find ".Length);
             var user = await userService.GetUser(update.Message.From.Id, ct);
-            var foundItems = await toDoService.Find(user, str);
+            var foundItems = await toDoService.Find(user, str, ct);
             if (foundItems.Count == 0)
             {
                 botClient.SendMessage(update.Message.Chat, "Задачи не найдены.", ct);
@@ -130,7 +130,7 @@ namespace HomeWorkFor5Lesson.TelegramBot
         private async Task ReportStats(ITelegramBotClient botClient, Update update, CancellationToken ct)
         {
             var user = await userService.GetUser(update.Message.From.Id, ct);
-            var stats = await toDoReportService.GetUserStats(user.UserId);
+            var stats = await toDoReportService.GetUserStats(user.UserId, ct);
             botClient.SendMessage(update.Message.Chat, $"Статистика по задачам на {stats.generatedAt}. Всего: {stats.total}; Завершенных: {stats.completed}; Активных: {stats.active};", ct);
         }
 
@@ -142,7 +142,7 @@ namespace HomeWorkFor5Lesson.TelegramBot
                 botClient.SendMessage(update.Message.Chat, "Неизвестная команда:", ct);
             }
             botClient.SendMessage(update.Message.Chat, "Вот ваш список задач:", ct);
-            foreach (var task in await toDoService.GetAllByUserId(user.UserId))
+            foreach (var task in await toDoService.GetAllByUserId(user.UserId, ct))
             {
                 botClient.SendMessage(update.Message.Chat, $"({task.State}) {task.Name} - {task.CreatedAt} - {task.Id}", ct);
             }
@@ -157,7 +157,7 @@ namespace HomeWorkFor5Lesson.TelegramBot
             }
             string str = update.Message.Text.Substring(@"/completetask ".Length);
             Guid delGuig = new Guid(str);
-            toDoService.MarkCompleted(delGuig);
+            toDoService.MarkCompleted(delGuig, ct);
         }
         // Вывоодим список доступных комманд
         private async Task EnableCommand(ITelegramBotClient botClient, Update update, CancellationToken ct)
@@ -223,7 +223,7 @@ namespace HomeWorkFor5Lesson.TelegramBot
                 botClient.SendMessage(update.Message.Chat, "Нельзя добавить задачу с пустым описанием", ct);
             else
             {
-                var newTask = toDoService.Add(user, str);
+                var newTask = toDoService.Add(user, str, ct);
                 botClient.SendMessage(update.Message.Chat, @$"Задача ""{str}"" добавлена в список", ct);
             }
         }
@@ -236,7 +236,7 @@ namespace HomeWorkFor5Lesson.TelegramBot
                 botClient.SendMessage(update.Message.Chat, "Неизвестная команда:", ct);
             }
             botClient.SendMessage(update.Message.Chat, "Вот ваш список задач:", ct);
-            foreach (var task in await toDoService.GetActiveByUserId(user.UserId))
+            foreach (var task in await toDoService.GetActiveByUserId(user.UserId, ct))
             {
                 botClient.SendMessage(update.Message.Chat, $"{task.Name} - {task.CreatedAt} - {task.Id}", ct);
             }
@@ -252,7 +252,7 @@ namespace HomeWorkFor5Lesson.TelegramBot
 
             string str = update.Message.Text.Substring(@"/removetask ".Length);
             Guid delGuig = new Guid(str);
-            toDoService.Delete(delGuig);
+            toDoService.Delete(delGuig, ct);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace HomeWorkFor5Lesson.Infrastructure.DataAccess
     {
         private readonly List<ToDoItem> toDoItems = new List<ToDoItem>();
 
-        public async Task<IReadOnlyList<ToDoItem>> GetAllByUserId(Guid userId)
+        public async Task<IReadOnlyList<ToDoItem>> GetAllByUserId(Guid userId, CancellationToken ct)
         {
             List<ToDoItem> tempList = new List<ToDoItem>();
             foreach (var item in toDoItems)
@@ -20,7 +20,7 @@ namespace HomeWorkFor5Lesson.Infrastructure.DataAccess
             return tempList;
         }
         //Возвращает ToDoItem для UserId со статусом Active
-        public async Task<IReadOnlyList<ToDoItem>> GetActiveByUserId(Guid userId)
+        public async Task<IReadOnlyList<ToDoItem>> GetActiveByUserId(Guid userId, CancellationToken ct)
         {
             List<ToDoItem> tempList = new List<ToDoItem>();
             foreach (var item in toDoItems)
@@ -30,11 +30,11 @@ namespace HomeWorkFor5Lesson.Infrastructure.DataAccess
             }
             return tempList;
         }
-        public async Task Add(ToDoItem item)
+        public async Task Add(ToDoItem item, CancellationToken ct)
         {
             toDoItems.Add(item);
         }
-        public async Task Update(ToDoItem item)
+        public async Task Update(ToDoItem item, CancellationToken ct)
         {
             for (int i = 0; i < toDoItems.Count; i++)
             {
@@ -44,7 +44,7 @@ namespace HomeWorkFor5Lesson.Infrastructure.DataAccess
                 }
             }
         }
-        public async Task Delete(Guid id)
+        public async Task Delete(Guid id, CancellationToken ct)
         {
             foreach (var item in toDoItems)
             {
@@ -73,7 +73,7 @@ namespace HomeWorkFor5Lesson.Infrastructure.DataAccess
             }
             return cnt;
         }
-        public async Task<ToDoItem> GetToDoItemById(Guid id)
+        public async Task<ToDoItem> GetToDoItemById(Guid id, CancellationToken ct)
         {
             foreach (var item in toDoItems)
             {
@@ -82,7 +82,7 @@ namespace HomeWorkFor5Lesson.Infrastructure.DataAccess
             }
             return null;
         }
-        public async Task<IReadOnlyList<ToDoItem>> Find(Guid userId, Func<ToDoItem, bool> predicate)
+        public async Task<IReadOnlyList<ToDoItem>> Find(Guid userId, Func<ToDoItem, bool> predicate, CancellationToken ct)
         {
             return toDoItems.Where(item => item.User.UserId == userId && predicate(item)).ToList();
         }
