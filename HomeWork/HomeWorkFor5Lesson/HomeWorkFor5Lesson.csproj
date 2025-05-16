@@ -11,4 +11,10 @@
     <ProjectReference Include="..\..\..\..\..\OneDrive\Рабочий стол\5 ООП классы и интерфейсы\Otus.ToDoList.ConsoleBot\Otus.ToDoList.ConsoleBot.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Otus.ToDoList.ConsoleBot">
+      <HintPath>..\..\..\C-Sharp-Basic\Homeworks\07 Асинхронность, делегаты и события\Otus.ToDoList.ConsoleBot\bin\Release\net8.0\Otus.ToDoList.ConsoleBot.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

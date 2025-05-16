@@ -5,17 +5,17 @@ namespace HomeWorkFor5Lesson.Core.DataAccess
 {
     interface IToDoRepository
     {
-        IReadOnlyList<ToDoItem> GetAllByUserId(Guid userId);
+        Task<IReadOnlyList<ToDoItem>> GetAllByUserId(Guid userId, CancellationToken ct);
         //Возвращает ToDoItem для UserId со статусом Active
-        IReadOnlyList<ToDoItem> GetActiveByUserId(Guid userId);
-        void Add(ToDoItem item);
-        void Update(ToDoItem item);
-        void Delete(Guid id);
+        Task<IReadOnlyList<ToDoItem>> GetActiveByUserId(Guid userId, CancellationToken ct);
+        Task Add(ToDoItem item, CancellationToken ct);
+        Task Update(ToDoItem item, CancellationToken ct);
+        Task Delete(Guid id, CancellationToken ct);
         //Проверяет есть ли задача с таким именем у пользователя
         bool ExistsByName(Guid userId, string name);
         //Возвращает количество активных задач у пользователя
         int CountActive(Guid userId);
-        ToDoItem GetToDoItemById(Guid id);
-        IReadOnlyList<ToDoItem> Find(Guid userId, Func<ToDoItem, bool> predicate);
+        Task<ToDoItem> GetToDoItemById(Guid id, CancellationToken ct);
+        Task<IReadOnlyList<ToDoItem>> Find(Guid userId, Func<ToDoItem, bool> predicate, CancellationToken ct);
     }
 }

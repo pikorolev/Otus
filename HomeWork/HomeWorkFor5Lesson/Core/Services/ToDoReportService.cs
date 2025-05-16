@@ -17,13 +17,13 @@ namespace HomeWorkFor5Lesson.Core.Services
             this.toDoRepository = toDoRepository;
         }
 
-        public (int total, int completed, int active, DateTime generatedAt) GetUserStats(Guid userId)
+        public async Task<(int total, int completed, int active, DateTime generatedAt)> GetUserStats(Guid userId, CancellationToken ct)
         {
             int total = 0;
             int completed = 0;
             int active = 0;
 
-            var items = toDoRepository.GetAllByUserId(userId);
+            var items = await toDoRepository.GetAllByUserId(userId, ct);
             total = items.Count;
             foreach (ToDoItem item in items)
             {

@@ -5,11 +5,11 @@ namespace HomeWorkFor5Lesson.Core.Services
     internal interface IToDoService
     {
         //Возвращает ToDoItem для UserId со статусом Active
-        IReadOnlyList<ToDoItem> GetActiveByUserId(Guid userId);
-        public IReadOnlyList<ToDoItem> GetAllByUserId(Guid userId);
-        ToDoItem Add(ToDoUser user, string name);
-        void MarkCompleted(Guid id);
-        void Delete(Guid id);
-        IReadOnlyList<ToDoItem> Find(ToDoUser user, string namePrefix);
+        Task<IReadOnlyList<ToDoItem>> GetActiveByUserId(Guid userId, CancellationToken ct);
+        Task<IReadOnlyList<ToDoItem>> GetAllByUserId(Guid userId, CancellationToken ct);
+        Task<ToDoItem> Add(ToDoUser user, string name, CancellationToken ct);
+        Task MarkCompleted(Guid id, CancellationToken ct);
+        Task Delete(Guid id, CancellationToken ct);
+        Task<IReadOnlyList<ToDoItem>> Find(ToDoUser user, string namePrefix, CancellationToken ct);
     }
 }

@@ -8,6 +8,8 @@ class Program
     {
         try
         {
+            using var cts = new CancellationTokenSource();
+
             InMemoryUserRepository inMemoryUserRepository = new InMemoryUserRepository();
             UserService userService = new UserService(inMemoryUserRepository);
 
@@ -21,9 +23,18 @@ class Program
             var handler = new UpdateHandler(userService, toDoService, toDoReportService);
             var botClient = new ConsoleBotClient();
 
-            
+            handler.OnHandleUpdateStarted += (message) => Console.WriteLine($"Началась обработка сообщения '{message}'");
+            handler.OnHandleUpdateCompleted += (message) => Console.WriteLine($"Закончилась обработка сообщения '{message}'");
 
-            botClient.StartReceiving(handler);
+            try
+            {
+                botClient.StartReceiving(handler, cts.Token);
+            }
+            finally
+            {
+                handler.OnHandleUpdateStarted -= (message) => Console.WriteLine($"Началась обработка сообщения '{message}'");
+                handler.OnHandleUpdateCompleted -= (message) => Console.WriteLine($"Закончилась обработка сообщения '{message}'");
+            }
         }
         catch (Exception ex)
         {
